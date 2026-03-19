@@ -22,16 +22,19 @@
             height: 100vh; text-align: center; overflow: hidden;
         }
 
+        /* Canvas for Fireworks */
+        #canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 999; }
+
         .screen {
             display: none; width: 85%; max-width: 400px;
             background: var(--glass); padding: 30px; border-radius: 40px;
             backdrop-filter: blur(20px); border: 1px solid rgba(255, 215, 0, 0.1);
             box-shadow: 0 25px 80px rgba(0,0,0,0.8);
-            animation: slideIn 0.6s ease-out;
-            max-height: 90vh; overflow-y: auto;
+            animation: slideIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            max-height: 90vh; overflow-y: auto; position: relative; z-index: 10;
         }
 
-        @keyframes slideIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
+        @keyframes slideIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
 
         .premium-img { 
             width: 100%; border-radius: 25px; 
@@ -42,25 +45,27 @@
         h1 { color: var(--gold); font-size: 1.6rem; margin-bottom: 15px; }
         
         #timer {
-            font-size: 2.2rem;
-            font-family: 'Poppins', sans-serif;
-            color: var(--gold);
-            margin: 20px 0;
-            text-shadow: 0 0 15px rgba(252, 194, 0, 0.4);
+            font-size: 2.5rem; font-family: 'Poppins', sans-serif;
+            color: var(--gold); margin: 20px 0;
+            text-shadow: 0 0 20px rgba(252, 194, 0, 0.5);
         }
 
         .btn {
             background: linear-gradient(45deg, var(--gold), #ffcc33);
-            color: #12020a; padding: 15px; border: none;
+            color: #12020a; padding: 16px; border: none;
             border-radius: 50px; font-size: 1.1rem; font-weight: 600;
             cursor: pointer; width: 100%; transition: 0.3s;
-            box-shadow: 0 8px 15px rgba(252, 194, 0, 0.2);
+            box-shadow: 0 10px 20px rgba(252, 194, 0, 0.2);
         }
 
-        .btn:hover { transform: scale(1.02); background: #fff; box-shadow: 0 12px 20px rgba(252, 194, 0, 0.4); }
+        .btn:hover { transform: translateY(-3px); background: #fff; box-shadow: 0 15px 25px rgba(252, 194, 0, 0.4); }
+
+        .rownak-footer {
+            margin-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px;
+        }
 
         .rownak-text {
-            font-size: 14px; font-weight: 600; letter-spacing: 1px;
+            font-size: 14px; font-weight: 600; letter-spacing: 2px;
             background: linear-gradient(to right, #ef5350, #f48fb1, #7e57c2, #2196f3, #26c6da, #43a047, #eeff41, #f9a825, #ff5722);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             animation: rainbow 3s linear infinite; background-size: 200% auto;
@@ -70,43 +75,43 @@
 </head>
 <body>
 
+    <canvas id="canvas"></canvas>
+
     <div id="lock-screen" class="screen">
         <div style="font-size: 50px; margin-bottom: 15px;">🔒</div>
         <h1>অপেক্ষা করুন... ✨</h1>
         <p id="lock-text">সারপ্রাইজটি ওপেন হতে বাকি:</p>
         <div id="timer">00:00:00</div>
-        
-        <button id="open-btn" class="btn" style="display: none;" onclick="showScreen(1)">সারপ্রাইজটি ওপেন করুন 🎁</button>
-        
-        <p style="font-size: 13px; color: #aaa; margin-top: 20px;">এটি শুধুমাত্র শনিবার ওপেন হবে</p>
+        <button id="open-btn" class="btn" style="display: none;" onclick="launchFireworks(); showScreen(1)">সারপ্রাইজটি ওপেন করুন 🎁</button>
+        <p style="font-size: 12px; color: #888; margin-top: 20px;">এটি শুধুমাত্র শনিবার ওপেন হবে</p>
     </div>
 
     <div id="screen-1" class="screen">
-        <img src="cat-salam.jpg" class="premium-img" alt="Salam Cat">
+        <img src="cat-salam.jpg" class="premium-img">
         <h1>আসসালামু আলাইকুম! 👋</h1>
         <button class="btn" onclick="showScreen(2)">ওয়ালাইকুম আসসালাম 👋</button>
     </div>
 
     <div id="screen-2" class="screen">
-        <img src="cat-funny.jpg" class="premium-img" alt="Funny Cat">
+        <img src="cat-funny.jpg" class="premium-img">
         <h1>হুমমম... 🙄</h1>
         <p>সালাম তো দিলাম, কিন্তু আমার <b>সালামি</b> কই? টাকা ছাড়া কি আর ঈদ হয়? 💸</p>
         <button class="btn" onclick="salamiLogic()">সালামি দিচ্ছি তো... ❤️</button>
     </div>
 
     <div id="screen-3" class="screen">
-        <img src="cat-eid.jpg" class="premium-img" alt="Eid Mubarak Cat">
+        <img src="cat-eid.jpg" class="premium-img">
         <h1>ঈদ মোবারক! 🌙</h1>
         <div style="font-size: 0.95rem; line-height: 1.8; text-align: justify; margin-bottom: 25px; color: #eee;">
-            পবিত্র ঈদুল ফিতরের এই খুশির দিনে আপনার ও আপনার পরিবারের সবার জীবন ভরে উঠুক অনাবিল আনন্দে। আকাশের ওই রুপালি চাঁদের হাসিতে ছড়িয়ে পড়ুক সুখ, শান্তি ও সমৃদ্ধি আপনার প্রতিটি কামনায়। <br><br>
-            আপনার আগামী দিনগুলো হোক প্রজাপতির মতো রঙিন আর রাতের স্বপ্নগুলো হোক চাঁদের আলোর মতো উজ্জ্বল। সব দুঃখ-কষ্ট ভুলে নতুন দিনে নতুনভাবে শুরু হোক আপনার পথচলা। এই উৎসবের রঙে রঙিন হয়ে উঠুক আপনার জীবন। অনেক অনেক দোয়া আর শুভকামনা রইল আপনার জন্য। ঈদ মোবারক! ✨🦋
+            পবিত্র ঈদুল ফিতরের এই খুশির দিনে আপনার ও আপনার পরিবারের সবার জীবন ভরে উঠুক অনাবিল আনন্দে। সব দুঃখ-কষ্ট ভুলে নতুন দিনে নতুনভাবে শুরু হোক আপনার পথচলা। এই উৎসবের রঙে রঙিন হয়ে উঠুক আপনার প্রতিটি মুহূর্ত। অনেক অনেক দোয়া আর শুভকামনা রইল আপনার জন্য। ✨🦋
         </div>
-        <div style="border-top: 1px solid rgba(255,255,255,0.1); padding-top:15px;">
+        <div class="rownak-footer">
             <span class="rownak-text">Developed by Rownak</span>
         </div>
         <button class="btn" onclick="location.reload()" style="background:transparent; border:1px solid #fff; color:#fff; margin-top:20px; font-size: 0.8rem;">আবার দেখুন 🔄</button>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <script>
         function showScreen(num) {
             document.querySelectorAll('.screen').forEach(s => s.style.display = 'none');
@@ -115,7 +120,24 @@
 
         function salamiLogic() {
             alert("থাক আর লাগবে না, এমনি বললাম 😂");
+            launchFireworks();
             showScreen(3);
+        }
+
+        function launchFireworks() {
+            var duration = 5 * 1000;
+            var animationEnd = Date.now() + duration;
+            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 1000 };
+
+            function randomInRange(min, max) { return Math.random() * (max - min) + min; }
+
+            var interval = setInterval(function() {
+                var timeLeft = animationEnd - Date.now();
+                if (timeLeft <= 0) return clearInterval(interval);
+                var particleCount = 50 * (timeLeft / duration);
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+            }, 250);
         }
 
         function startCountdown() {
@@ -125,8 +147,6 @@
 
             const countdown = () => {
                 const now = new Date();
-                
-                // শনিবার (Day 6) হলে বাটন দেখাবে
                 if (now.getDay() === 6) {
                     timerElement.style.display = 'none';
                     lockText.innerHTML = "সময় শেষ! এখন আপনি সারপ্রাইজটি দেখতে পারবেন।";
@@ -134,19 +154,15 @@
                     return;
                 }
 
-                // আগামী শনিবার রাত ১২টা (Friday Midnight)
                 let nextSaturday = new Date();
                 let daysToSat = (6 - now.getDay() + 7) % 7;
                 if (daysToSat === 0) daysToSat = 7;
-                
                 nextSaturday.setDate(now.getDate() + daysToSat);
                 nextSaturday.setHours(0, 0, 0, 0);
 
                 const diff = nextSaturday - now;
-                
                 if (diff <= 0) {
                     timerElement.style.display = 'none';
-                    lockText.innerHTML = "সময় শেষ!";
                     openBtn.style.display = 'block';
                     return;
                 }
@@ -155,12 +171,8 @@
                 const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
                 const secs = Math.floor((diff % (1000 * 60)) / 1000);
 
-                timerElement.innerHTML = 
-                    (hours < 10 ? "0" + hours : hours) + ":" + 
-                    (mins < 10 ? "0" + mins : mins) + ":" + 
-                    (secs < 10 ? "0" + secs : secs);
+                timerElement.innerHTML = (hours < 10 ? "0" + hours : hours) + ":" + (mins < 10 ? "0" + mins : mins) + ":" + (secs < 10 ? "0" + secs : secs);
             };
-
             countdown();
             setInterval(countdown, 1000);
         }
